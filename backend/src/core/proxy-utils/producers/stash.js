@@ -36,6 +36,8 @@ export default function Stash_Producer() {
                         'anytls',
                         'tailscale',
                         'trusttunnel',
+                        'masque',
+                        'mieru',
                     ].includes(proxy.type) ||
                     (proxy.type === 'ss' &&
                         ![
@@ -56,7 +58,7 @@ export default function Stash_Producer() {
                             '2022-blake3-aes-128-gcm',
                             '2022-blake3-aes-256-gcm',
                         ].includes(proxy.cipher)) ||
-                    (proxy.type === 'snell' && proxy.version >= 4)
+                    (proxy.type === 'snell' && proxy.version >= 6)
                 ) {
                     return false;
                 } else if (
@@ -78,12 +80,9 @@ export default function Stash_Producer() {
                             proxy['reality-opts']))
                 ) {
                     return false;
-                } else if (['xhttp'].includes(proxy.network)) {
-                    return false;
                 } else if (
-                    proxy.encryption &&
-                    proxy.encryption !== 'none' &&
-                    ['vless'].includes(proxy.type)
+                    !['vless'].includes(proxy.type) &&
+                    ['xhttp'].includes(proxy.network)
                 ) {
                     return false;
                 } else if (
@@ -262,9 +261,9 @@ export default function Stash_Producer() {
                         proxy['h2-opts']?.headers?.host ??
                         proxy['h2-opts']?.headers?.Host;
                     if (
-                        (isPresent(proxy, 'h2-opts.host') ||
-                            isPresent(proxy, 'h2-opts.headers.host') ||
-                            isPresent(proxy, 'h2-opts.headers.Host'))
+                        isPresent(proxy, 'h2-opts.host') ||
+                        isPresent(proxy, 'h2-opts.headers.host') ||
+                        isPresent(proxy, 'h2-opts.headers.Host')
                     ) {
                         proxy['h2-opts'].host = Array.isArray(host)
                             ? host
